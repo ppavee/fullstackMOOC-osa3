@@ -1,0 +1,7 @@
+POST https://tranquil-wildwood-58641.herokuapp.com/api/persons
+Content-Type: application/json
+
+{
+    "name": "Liisa Marttinen",
+    "number": "12343564"
+}
