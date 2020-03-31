@@ -53,6 +53,10 @@ app.post('/api/persons', (request, response) => {
         return response.status(400).json({
             error: 'name and number needed'
         })
+    } else if(persons.map(p => p.name.toLowerCase()).includes(body.name.toLowerCase())) {
+        return response.status(403).json({
+            error: 'name must be unique'
+        })
     }
     const person = {
         name: body.name,
