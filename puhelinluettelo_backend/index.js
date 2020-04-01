@@ -44,7 +44,6 @@ app.get('/api/persons', (request, response) => {
     Person.find({}).then(result => {
         response.json(result.map(p => p.toJSON()))
     })
-    //response.json(persons)
 })
 
 app.get('/info', (request, response) => {
@@ -58,13 +57,6 @@ app.get('/api/persons/:id', (request, response) => {
     Person.findById(request.params.id).then(person => {
         response.json(person.toJSON())
     })
-    // const id = Number(request.params.id)
-    // const person = persons.find(p => p.id === id)
-    // if(person) {
-    //     response.json(person)
-    // } else {
-    //     response.status(404).end()
-    // }
 })
 
 app.post('/api/persons', (request, response) => {
@@ -87,13 +79,6 @@ app.post('/api/persons', (request, response) => {
     person.save().then(savedPerson => {
         response.json(savedPerson.toJSON())
     })  
-    // const person = {
-    //     name: body.name,
-    //     number: body.number,
-    //     id: Math.floor(Math.random()*100000 + 1)
-    // }
-    // persons = persons.concat(person)
-    // response.json(person)
 })
 
 app.delete('/api/persons/:id', (request, response) => {
