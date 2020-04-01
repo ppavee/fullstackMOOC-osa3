@@ -9,7 +9,6 @@ app.use(cors())
 app.use(express.static('build'))
 app.use(express.json())
 
-
 morgan.token('body', (request, response) => {
     if (request.method !== 'POST') {
         return null
@@ -17,6 +16,8 @@ morgan.token('body', (request, response) => {
     return JSON.stringify(request.body)
 })
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+
+
 
 
 let persons = [
@@ -51,10 +52,6 @@ app.get('/api/persons', (request, response, next) => {
 
 
 app.get('/info', (request, response, next) => {
-    // const peopleCount = Person.estimatedDocumentCount()
-    // const requestTime = new Date()
-    // response.send(`<p>Phonebook has info for ${peopleCount} people</p>
-    //                <p>${requestTime.toString()}</p>`)
     Person.estimatedDocumentCount().then(result => {
         const requestTime = new Date()
         response.send(`<p>Phonebook has info for ${result} people</p>
@@ -87,6 +84,7 @@ app.post('/api/persons', (request, response, next) => {
             error: 'name must be unique'
         })
     }
+    
 
     const person = new Person({
         name: body.name,
@@ -96,7 +94,10 @@ app.post('/api/persons', (request, response, next) => {
     person.save().then(savedPerson => {
         response.json(savedPerson.toJSON())
     })
-    .catch(error => next(error))
+    .catch(error =>  {
+        error.status = 400
+        next(error)
+    })
 })
 
 
@@ -132,15 +133,19 @@ app.use(unknownEndpoint)
 
 const errorHandler = (error, request, response, next) => {
     console.error(error.message)
-
     if(error.name === 'CastError') {
         return response.status(400).send({ error: 'malformatted id'})
+    } else if(error.name === 'ValidationError') {
+        return response.status(400).json({ error: error.message })
     }
 
     next(error)
 }
 
+
+
 app.use(errorHandler)
+
 
 
 const PORT = process.env.PORT
