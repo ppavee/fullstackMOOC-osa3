@@ -49,12 +49,20 @@ app.get('/api/persons', (request, response, next) => {
     .catch(error => next(error))
 })
 
-app.get('/info', (request, response) => {
-    const peopleCount = persons.length
-    const requestTime = new Date()
-    response.send(`<p>Phonebook has info for ${peopleCount} people</p>
+
+app.get('/info', (request, response, next) => {
+    // const peopleCount = Person.estimatedDocumentCount()
+    // const requestTime = new Date()
+    // response.send(`<p>Phonebook has info for ${peopleCount} people</p>
+    //                <p>${requestTime.toString()}</p>`)
+    Person.estimatedDocumentCount().then(result => {
+        const requestTime = new Date()
+        response.send(`<p>Phonebook has info for ${result} people</p>
                    <p>${requestTime.toString()}</p>`)
+    })
+    .catch(error => next(error))
 })
+
 
 app.get('/api/persons/:id', (request, response, next) => {
     Person.findById(request.params.id).then(person => {
@@ -66,6 +74,7 @@ app.get('/api/persons/:id', (request, response, next) => {
     })
     .catch(error => next(error))
 })
+
 
 app.post('/api/persons', (request, response, next) => {
     const body = request.body
@@ -90,12 +99,36 @@ app.post('/api/persons', (request, response, next) => {
     .catch(error => next(error))
 })
 
+
 app.delete('/api/persons/:id', (request, response, next) => {
     Person.findByIdAndRemove(request.params.id).then(result => {
         response.status(204).end()
     })
     .catch(error => next(error))
 })
+
+
+app.put('/api/persons/:id', (request, response, next) => {
+    const body = request.body
+
+    const person = {
+        name: body.name,
+        number: body.number
+    }
+    Person.findByIdAndUpdate(request.params.id, person, { new: true })
+        .then(updatedPerson => {
+            response.json(updatedPerson.toJSON())
+        })
+        .catch(error => next(error))
+})
+
+
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
+
 
 const errorHandler = (error, request, response, next) => {
     console.error(error.message)
