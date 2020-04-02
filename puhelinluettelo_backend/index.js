@@ -22,24 +22,24 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 
 let persons = [
     {
-        "name": "Arto Hellas",
-        "number": "040-123456",
-        "id": 1
+        'name': 'Arto Hellas',
+        'number': '040-123456',
+        'id': 1
     },
     {
-        "name": "Ada Lovelace",
-        "number": "39-44-5323523",
-        "id": 2
+        'name': 'Ada Lovelace',
+        'number': '39-44-5323523',
+        'id': 2
     },
     {
-        "name": "Dan Abramov",
-        "number": "12-43-234345",
-        "id": 3
+        'name': 'Dan Abramov',
+        'number': '12-43-234345',
+        'id': 3
     },
     {
-        "name": "Mary Poppendieck",
-        "number": "39-23-6423122",
-        "id": 4
+        'name': 'Mary Poppendieck',
+        'number': '39-23-6423122',
+        'id': 4
     },
 ]
 
@@ -47,7 +47,7 @@ app.get('/api/persons', (request, response, next) => {
     Person.find({}).then(result => {
         response.json(result.map(p => p.toJSON()))
     })
-    .catch(error => next(error))
+        .catch(error => next(error))
 })
 
 
@@ -57,7 +57,7 @@ app.get('/info', (request, response, next) => {
         response.send(`<p>Phonebook has info for ${result} people</p>
                    <p>${requestTime.toString()}</p>`)
     })
-    .catch(error => next(error))
+        .catch(error => next(error))
 })
 
 
@@ -69,7 +69,7 @@ app.get('/api/persons/:id', (request, response, next) => {
             response.status(404).end()
         }
     })
-    .catch(error => next(error))
+        .catch(error => next(error))
 })
 
 
@@ -84,7 +84,6 @@ app.post('/api/persons', (request, response, next) => {
             error: 'name must be unique'
         })
     }
-    
 
     const person = new Person({
         name: body.name,
@@ -94,10 +93,10 @@ app.post('/api/persons', (request, response, next) => {
     person.save().then(savedPerson => {
         response.json(savedPerson.toJSON())
     })
-    .catch(error =>  {
-        error.status = 400
-        next(error)
-    })
+        .catch(error =>  {
+            error.status = 400
+            next(error)
+        })
 })
 
 
@@ -105,7 +104,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
     Person.findByIdAndRemove(request.params.id).then(result => {
         response.status(204).end()
     })
-    .catch(error => next(error))
+        .catch(error => next(error))
 })
 
 
@@ -134,7 +133,7 @@ app.use(unknownEndpoint)
 const errorHandler = (error, request, response, next) => {
     console.error(error.message)
     if(error.name === 'CastError') {
-        return response.status(400).send({ error: 'malformatted id'})
+        return response.status(400).send({ error: 'malformatted id' })
     } else if(error.name === 'ValidationError') {
         return response.status(400).json({ error: error.message })
     }
